@@ -1,3 +1,14 @@
+"""
+    .. module:: preprocesser_piedmont
+    :platform: Unix, Windows
+    :synopsis: Synthetic Population Preprocessor for further network reconstruction
+    """
+# For smooth run, it requires "import numpy; print(numpy.__version__)" >= 1.13
+# Please disable `HDF5_USE_FILE_LOCKING` before running on Cray machines:
+#    export HDF5_USE_FILE_LOCKING=FALSE
+# See https://github.com/ALPSCore/ALPSCore/issues/348 for further details
+import logging
+
 import platform
 import sys
 import os
@@ -10,6 +21,9 @@ import h5py
 from mpi4py import MPI
 import pandas as pd
 import pickle, gzip
+
+# Workaround to run on machines with old versions of numpy
+np_isin = np.isin if np.__version__ >= "1.13" else np.in1d
 
 r_earth=6.3781*10**6
 
@@ -29,13 +43,13 @@ def GeoDist(lat1, lon1, lat2, lon2):
 
 
 def preprocessing(comm, size, rank):
-    
+    import getpass
     if os.getcwd()=='/home/sarawalk/Piedmont/Piedmont_2_0':
         home="/home/sarawalk/Piedmont/Piedmont_2_0/"
         in_file="/vdb1/sarawalk/Piedmont_out/Syn_Pops/synthPop_Piedimont_10pc_2011.h5"
         out_file='/vdb1/sarawalk/Piedmont_out/Syn_Pops/synthPop_Piedimont_10pc_2011_ppd.h5'
         helper='/vdb1/sarawalk/maps_and_rasters/resources/Italy/boundaries/Piemonte_NUTS3_to_LAU2_gdf.pkl.gz'
-    else:
+    elif getpass.getuser().lower() == "fabio":
         if platform.system()=='Darwin':
             home='/Users/Fabio/'
         else:
@@ -43,12 +57,13 @@ def preprocessing(comm, size, rank):
         in_file=home+'Documents/Lavoro/Similarity_Networks/synthPop_Piedimont_10pc_2011.h5'
         out_file=home+'Documents/Lavoro/Similarity_Networks/synthPop_Piedimont_10pc_2011_ppd.h5'
         helper=home+'Documents/Lavoro/Similarity_Networks/Piemonte_NUTS3_to_LAU2_gdf.pkl.gz'
-
-
-    
+    else:
+        in_file=os.path.join(os.getcwd(), 'synthPop_Piedimont_10pc_2011.h5')
+        out_file=os.path.join(os.getcwd(), 'synthPop_Piedimont_10pc_2011_ppd.h5')
+        helper=os.path.join(os.getcwd(), 'resources', 'Italy', 'boundaries', 'Piemonte_NUTS3_to_LAU2_gdf.pkl.gz')
 
     with h5py.File(in_file, 'r') as f:
-        print '{:%Y-%m-%d %H:%M:%S}'.format(dt.datetime.now())+' starting #'+str(rank)
+        logging.info(' starting #'+str(rank))
         sys.stdout.flush()
         
         # l0=0 refers to the Turin county
@@ -56,7 +71,7 @@ def preprocessing(comm, size, rank):
         # l1=0 refers to the Turin municipality. I am selecting households in the Turin municipality
         turin_hh=turin_hh_area[turin_hh_area['l1']==569]['id']
         # I am selecting agents whose households is in the Turin municipality
-        selection=np.isin(f['agent']['hh'], turin_hh)
+        selection=np_isin(f['agent']['hh'], turin_hh)
         # where is the exact position in the list of agents
         where_to=np.where(selection)[0]
         
@@ -74,29 +89,29 @@ def preprocessing(comm, size, rank):
         lt=len(f['agent'])
         lr=len(where_to)
         
-        print '{:%Y-%m-%d %H:%M:%S}'.format(dt.datetime.now())+' lr='+str(lr)+' #'+str(rank)
+        logging.info(' lr='+str(lr)+' #'+str(rank))
         sys.stdout.flush()
         
         # Here I am calculating the efforts per processor
         effort=np.floor(1.*lr/size)*np.ones(size)
         remainder=lr % size
         offset=np.zeros(size, dtype='>i4')
-        for i in xrange(size):
+        for i in range(size):
             if i<remainder:
                 effort[i]+=1
             if i>0:
                 offset[i]=offset[i-1]+effort[i-1]
-
-        my_chunk=xrange(int(offset[rank]),int(offset[rank]+effort[rank]))
-        print '{:%Y-%m-%d %H:%M:%S}'.format(dt.datetime.now())+' effort='+str(int(effort[rank]))+' #'+str(rank)
-        print '{:%Y-%m-%d %H:%M:%S}'.format(dt.datetime.now())+' my_chunk=['+str(my_chunk[0])+', '+str(my_chunk[-1])+'] #'+str(rank)
+    
+        my_chunk=range(int(offset[rank]),int(offset[rank]+effort[rank]))
+        logging.info(' effort='+str(int(effort[rank]))+' #'+str(rank))
+        logging.info(' my_chunk=['+str(my_chunk[0])+', '+str(my_chunk[-1])+'] #'+str(rank))
         sys.stdout.flush()
 
-        # I am reading data and putting them into a buffer
+# I am reading data and putting them into a buffer
 
 
-        ags_dataset = f["agent"]
-        ags_ids = np.array(ags_dataset["id"])
+ags_dataset = f["agent"]
+    ags_ids = np.array(ags_dataset["id"])
         ags_hhi = np.array(ags_dataset["hh"])
         ags_wpi = np.array(ags_dataset["wp"])
         ags_sex = np.array(ags_dataset["sex"])
@@ -122,17 +137,18 @@ def preprocessing(comm, size, rank):
 
 
     # the helper file contains the information about the bounders of the different municipality and the relative codes. This is necessary in order to assign the possible link to the municipality, i.e. in order to assign every agent to a municipality (identified by its code).
-    geoDataFrame = pickle.load(gzip.open(helper, "rb"))
+
+    geoDataFrame = pickle.load(gzip.open(helper, "rb"))#, encoding='latin1'
     turin=geoDataFrame[2][geoDataFrame[2]['l0']==0]
-    print '{:%Y-%m-%d %H:%M:%S}'.format(dt.datetime.now())+' turin.iloc[0][code]='+str(turin.iloc[0]['code'])+' #'+str(rank)
+    logging.info(' turin.iloc[0][code]='+str(turin.iloc[0]['code'])+' #'+str(rank))
     sys.stdout.flush()
 
 
-    with h5py.File(out_file, 'w', driver='mpio', comm=comm, libver='latest') as g:
-        ppd_g=g.create_group('SPP10pc')
+with h5py.File(out_file, 'w', driver='mpio', comm=comm, libver='latest') as g:
+    ppd_g=g.create_group('SPP10pc')
         # pre-processed data
         ppd_da=ppd_g.create_dataset('da', data=np.array(['c', 'o', 'c','c', 'c', 'o','g','g','g','g','o']))
-
+        
         dtype=np.dtype([('sex','i8'),('age','i8'), ('role','i8'), ('edu','i8'), ('employed','i8'), ('income','i8'), ('wp_lon','f8'), ('wp_lat','f8'), ('hh_lon','f8'), ('hh_lat','f8'), ('wp_hh','i8')])
         # In principle this step could be automatized, but since some of the original entries (like the wp code)
         # are in a non trivial form, it would not in principle deserve the effort, since it should change from
@@ -140,7 +156,7 @@ def preprocessing(comm, size, rank):
         ppd=ppd_g.create_dataset('ppd', (lr,), dtype=dtype)
         for i in my_chunk:
             if i % 10000==0:
-                print '{:%Y-%m-%d %H:%M:%S}'.format(dt.datetime.now())+' i='+str(i)+' #'+str(rank)
+                logging.info(' i='+str(i)+' #'+str(rank))
                 sys.stdout.flush()
             j=where_to[i]
             assert j<lt, '{:%Y-%m-%d %H:%M:%S}'.format(dt.datetime.now())+' odd index j='+str(j)+' #'+str(rank)
@@ -165,33 +181,35 @@ def preprocessing(comm, size, rank):
                 aux_wp_lat = aux_hh_lat
                 wp_hh = np.zeros(1)
             if i==0:
-                print '{:%Y-%m-%d %H:%M:%S}'.format(dt.datetime.now())+'int(ags_sex[j])='+str(int(ags_sex[j]))+' # '+str(rank)
-                
+                logging.info('int(ags_sex[j])='+str(int(ags_sex[j]))+' # '+str(rank))
+            
             #ppd[i]['sex']=int(ags_sex[j])
             #ppd[i]['age']=int(ags_age[j])
             #ppd[i]['edu']=int(ags_edu[j])
             #ppd[i]['role']=int(ags_rol[j])
             #ppd[i]['employed']=int(ags_emp[j])
-            #ppd[i]['income']=int(np.round(ags_inc[j]/1000)) 
+            #ppd[i]['income']=int(np.round(ags_inc[j]/1000))
             #ppd[i]['wp_lon']=aux_wp_lon[0]
             #ppd[i]['wp_lat']=aux_wp_lat[0]
             #ppd[i]['hh_lon']=aux_hh_lon[0]
             #ppd[i]['hh_lat']=aux_hh_lat[0]
             #ppd[i]['wp_hh']=int(np.round(wp_hh/1000))
+            
+            
+            
+                    ppd[i]=(int(ags_sex[j]), int(ags_age[j]), int(ags_rol[j]), int(ags_edu[j]), int(ags_emp[j]), int(np.round(ags_inc[j]/1000)), aux_wp_lat[0], aux_wp_lon[0], aux_hh_lat[0], aux_hh_lon[0],int(np.round(wp_hh/1000)))
 
-
-
-            ppd[i]=(int(ags_sex[j]), int(ags_age[j]), int(ags_rol[j]), int(ags_edu[j]), int(ags_emp[j]), int(np.round(ags_inc[j]/1000)), aux_wp_lat[0], aux_wp_lon[0], aux_hh_lat[0], aux_hh_lon[0],int(np.round(wp_hh/1000)))
-
-    print '{:%Y-%m-%d %H:%M:%S}'.format(dt.datetime.now())+' just finished #'+str(rank)
-    print '{:%Y-%m-%d %H:%M:%S}'.format(dt.datetime.now())+' We all finished #'+str(rank)
-
-
-
+logging.info(' just finished #'+str(rank))
+    logging.info(' We all finished #'+str(rank))
+    
+    
+    
     return 0
 
 
 if __name__ == "__main__":
+    logging.basicConfig(format='%(asctime)s %(message)s', datefmt=':%Y-%m-%d %H:%M:%S', level=logging.INFO)
+    
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
