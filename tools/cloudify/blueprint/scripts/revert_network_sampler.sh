@@ -84,7 +84,7 @@ echo """[
 	    \"description\" : \"Synthetic network with hss=$3 and dump=$4 produced by job $(basename ${CURRENT_WORKDIR})\"
 	}
     ]
-]""" | python $2/cloudify_blueprint_0_1/ckan_upload_data.py \
+]""" | python $2/tools/cloudify/ckan_upload_data.py \
        -ip "$7" -k "$8" -d "$9-output" 2> xyz2.err
 
 # # Clean up data

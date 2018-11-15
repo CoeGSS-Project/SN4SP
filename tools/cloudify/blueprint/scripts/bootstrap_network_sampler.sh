@@ -43,7 +43,6 @@ module load python/2.7.14
 module load hdf5/1.10.1_openmpi-2.1.2_gcc620
 
 . $1/bin/activate
-\${MPIEXEC} -n $6 python $2/SiNe4SyPo_3_3_piedmont.py ${CURRENT_WORKDIR}/synthetic_population_ppd.h5 -o ${WS_PREFIX:-${CURRENT_WORKDIR}}/synthetic_network.h5 -hss $3 -d $4 -p $5
-#\${MPIEXEC} -n $6 python $2/SiNe4SyPo_3_3_piedmont.py -in ${CURRENT_WORKDIR} -out ${WS_PREFIX:-${CURRENT_WORKDIR}} -hss $3 -d $4 -s $5
+\${MPIEXEC} -n $6 python $2/SiNe4SyPo_piedmont.py ${CURRENT_WORKDIR}/synthetic_population_ppd.h5 -o ${WS_PREFIX:-${CURRENT_WORKDIR}}/synthetic_network.h5 -hss $3 -d $4 -p $5
 deactivate
 EOM

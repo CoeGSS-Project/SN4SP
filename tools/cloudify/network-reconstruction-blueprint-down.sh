@@ -13,7 +13,7 @@
 ## Remove network reconstruction blueprint from Cloudify
 ############################################################
 
-cd network-reconstruction-sbatch-job
+cd blueprint
 echo "Uninstalling deployment.."
 cfy executions start -d network-reconstruction-sbatch-job uninstall
 echo "Deleting deployment.."

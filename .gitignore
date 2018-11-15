@@ -1,0 +1,57 @@
+############################################################
+# Editor temporary and backup files
+############################################################
+.#*
+[#]*#
+*~
+*$
+*.bak
+*.diff
+.idea/
+*.iml
+*.ipr
+*.iws
+*.org
+.project
+pmip
+*.rej
+.settings/
+.*.sw[nop]
+.sw[nop]
+*.tmp
+*.vim
+.vscode
+tags
+cscope.out
+# GNU global
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+.cache
+
+############################################################
+# Compiled source
+############################################################
+*.py[ocd]
+
+############################################################
+# Python files
+############################################################
+build
+.cache
+dist
+*.egg-info
+MANIFEST
+
+############################################################
+# IDE project files
+############################################################
+*.sublime-project
+*.sublime-workspace
+
+############################################################
+# Files specific to the project
+############################################################
+sn4sp/version.py
+tools/cloudify/local-blueprint-inputs.yaml

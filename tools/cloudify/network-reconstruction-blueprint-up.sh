@@ -13,7 +13,7 @@
 ## Run network reconstruction job on HPC via Cloudify
 ############################################################
 
-cd network-reconstruction-sbatch-job
+cd blueprint
 cfy blueprints upload -b network-reconstruction-sbatch-job blueprint.yaml
 # read -n 1 -s -p "Press any key to continue"
 # echo ''

@@ -56,7 +56,7 @@ echo """[
 	    \"description\" : \"Spatially distributed synthetic population produced by job $(basename ${CURRENT_WORKDIR})\"
 	}
     ]
-]""" | python $2/cloudify_blueprint_0_1/ckan_upload_data.py \
+]""" | python $2/tools/cloudify/ckan_upload_data.py \
        -ip "$7" -k "$8" -d "$9-output" 2> xyz0.err
 
 # Upload stderr and stdout files

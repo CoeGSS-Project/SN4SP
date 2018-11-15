@@ -1,5 +1,5 @@
 #############################
-# Provider specific Inputs
+# Provider specific inputs
 #############################
 synpop_path: 'synthPop_Piedimont_10pc_2011_ppd.h5'
 synnet_path: '.'
@@ -11,7 +11,7 @@ stripe_size: "0.1"
 ############################################
 # Details of the application lifecycle
 ############################################
-#python_module: '~/opt/pyenv/cl3fr2-int/coegss/2.7'
+# python_module: '~/opt/pyenv/cl3fr2-int/coegss/2.7'
 python_module: '~/opt/pyenv/eagle.man.poznan.pl/coegss/2.7'
 num_processes: "4"
 
@@ -25,7 +25,7 @@ coegss_datacatalogue_key: "CKAN_API_KEY"
 coegss_outdataset_outputs_at: "coegss-network-reconstruction"
 
 ############################################
-# Cluster configurations
+# Cluster configurations and credentials
 ############################################
 # HLRS Vulcan cluster configuration
 coegss_hlrs_laki:
