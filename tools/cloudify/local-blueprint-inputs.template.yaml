@@ -1,0 +1,70 @@
+#############################
+# Provider specific Inputs
+#############################
+synpop_path: 'synthPop_Piedimont_10pc_2011_ppd.h5'
+synnet_path: '.'
+
+half_similarity: "5000"
+damping: "0"
+stripe_size: "0.1"
+
+############################################
+# Details of the application lifecycle
+############################################
+#python_module: '~/opt/pyenv/cl3fr2-int/coegss/2.7'
+python_module: '~/opt/pyenv/eagle.man.poznan.pl/coegss/2.7'
+num_processes: "4"
+
+job_prefix: "coegss_network_reconstruction_"
+
+# Job monitoring
+monitor_entrypoint: "EXTERNAL_MONITOR_IP"
+
+# CKAN
+coegss_datacatalogue_key: "CKAN_API_KEY"
+coegss_outdataset_outputs_at: "coegss-network-reconstruction"
+
+############################################
+# Cluster configurations
+############################################
+# HLRS Vulcan cluster configuration
+coegss_hlrs_laki:
+    credentials:
+        host: "vulcan.hww.hlrs.de"
+        user: "USERNAME"
+        private_key: |
+          -----BEGIN RSA PRIVATE KEY-----
+          -----END RSA PRIVATE KEY-----
+        private_key_password: "PRIVATE_KEY_PASSWORD"
+        password: "PASSWORD"
+        login_shell: true
+    country_tz: "Europe/Stuttgart"
+    workload_manager: "TORQUE"
+
+# HLRS Hazelhen cluster configuration
+coegss_hlrs_hazelhen:
+    credentials:
+        host: "hazelhen.hww.hlrs.de"
+        user: "USERNAME"
+        private_key: |
+          -----BEGIN RSA PRIVATE KEY-----
+          -----END RSA PRIVATE KEY-----
+        private_key_password: "PRIVATE_KEY_PASSWORD"
+        password: "PASSWORD"
+        login_shell: true
+    country_tz: "Europe/Stuttgart"
+    workload_manager: "TORQUE"
+
+# PSNC Eagle cluster configuration
+coegss_psnc_eagle:
+    credentials:
+        host: "eagle.man.poznan.pl"
+        user: "USERNAME"
+        private_key: |
+          -----BEGIN RSA PRIVATE KEY-----
+          -----END RSA PRIVATE KEY-----
+        private_key_password: "PRIVATE_KEY_PASSWORD"
+        password: "PASSWORD"
+        login_shell: false
+    country_tz: "Europe/Posnan"
+    workload_manager: "SLURM"

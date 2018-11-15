@@ -1,0 +1,26 @@
+include MANIFEST.in
+include setup.py
+include *.rst
+include *.txt
+
+# Sources of the library:
+recursive-include sn4sp *.py
+
+# Tests:
+# TODO
+# include tox.ini pytest.ini .coveragerc
+
+# Benchmarks:
+prune benchmarks
+
+# Docs:
+# TODO
+prune doc/build
+
+# Miscelaneous:
+prune */__pycache__
+prune blueprint
+
+# Auxiliary files (system files, generated files, etc):
+global-exclude .git
+global-exclude *~ *.pyc *.pyo *.pyd
