@@ -44,10 +44,10 @@ In order to run application with the Cloudify manager, the user must do the foll
   
 - deploy the blueprint:
   At this step, the user must specify blueprint inputs.
-- run `install` execution
+- run `install` execution.
   `install` execution launches bootstrapping scripts with the blueprint inputs as arguments,
   which produces batch scripts for the workload manager. 
-- launch `job_run` execution
+- launch `job_run` execution.
   `job_run` execution put the batch scripts into the workload manager queue.
 
 As soon as, the parallel job is finished, the user must uninstall blueprint from Cloudify manager
@@ -82,7 +82,7 @@ In case, you do not have access to Cloudify manager, you can deploy manager loca
 There are 2 fast options for deployment:
 
 - use Cloudify manager VM
-- use Cloudify manager Docker image
+- use Cloudify manager Docker container
 
 ### VM
 
@@ -92,46 +92,47 @@ There are 2 fast options for deployment:
 
 2. Run this VM in VM-manager
 3. Identify IP of this VM:
-
+```sh
    $ nmap -sP 192.168.122.0/24
    >>> 111.222.333.444
-
+```
 4. Use this IP to create profile on Cloudify VM:
-
+```sh
    $ cfy profiles use 111.222.333.444 -u admin -p admin -t default_tenant
-
+```
 5. Run parallel job using the blueprint:
-
+```sh
    $ ./network-reconstruction-sbatch-up.sh
-
+```
 6. Uninstall blueprint:
-
+```sh
    $ ./network-reconstruction-sbatch-down.sh
-
-Read more about installation [here](https://cloudify.co/guide/3.1/installation-cli.htm)
+```
+Read more about installation [here](https://cloudify.co/guide/3.1/installation-cli.htm).
 
 ### Docker
 
-1. :
+1. run docker container:
+```sh
    $ sudo docker run --name cfy_manager_local -d --restart unless-stopped -v /sys/fs/cgroup:/sys/fs/cgroup:ro --tmpfs /run --tmpfs /run/lock --security-opt seccomp:unconfined --cap-add SYS_ADMIN -p 80:80 -p 8000:8000 cloudifyplatform/community:18.7.23
    $ docker exec -it cfy_manager_local /bin/bash
-
+```
 2. Use this IP to create profile on Cloudify VM:
-
+```sh
    $ cfy profiles use 192.168.122.22 -u admin -p admin -t default_tenant
    $ cfy status
-
-3. Copy blueprint to docker image:
-
+```
+3. Copy blueprint to docker container:
+```sh
    $ docker cp ./tools/cloudify cfy_manager_local:/target
    $ cd ./tools/cloudify/
-
+```
 4. Run parallel job using the blueprint:
-
+```sh
    $ ./network-reconstruction-sbatch-up.sh
-
+```
 5. Uninstall blueprint:
-
+```sh
    $ ./network-reconstruction-sbatch-down.sh
-
-Read more about installation with Docker [here](https://cloudify.co/getting-started/)
+```
+Read more about installation with Docker [here](https://cloudify.co/getting-started/).

@@ -64,7 +64,7 @@ inputs:
         default: {}
 
     # Third HPC configuration
-    coegss_hlrs_laki:
+    coegss_hlrs_vulcan:
         description: Configuration for the secondary HPC at HLRS to be used
         default: {}
 

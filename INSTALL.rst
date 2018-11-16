@@ -23,9 +23,11 @@ Building SN4SP requires the following software installed:
 
    Python must also be compiled with the zlib module enabled.
 
-2) numpy >= 0.14
-3) mpi4py
-3) h5py parallel version
+2) ``numpy >= 0.14``
+
+3) ``mpi4py``
+
+4) ``h5py``, parallel version
 
    This is required for both testing and using ``sn4sp``.
 
@@ -37,12 +39,12 @@ Basic Installation
 
 To install ``sn4sp`` run::
 
-    python setup.py build -j 2 install --prefix $HOME/.local
+    $ python setup.py build -j 2 install --prefix $HOME/.local
 
 This will compile ``sn4sp`` on 2 CPU cores and install it into the specified prefix.
 To perform an inplace build that can be run from the source folder run::
 
-    python setup.py build_ext --inplace -j 2
+    $ python setup.py build_ext --inplace -j 2
 
 Note that the ``python`` command here is the system default Python. Use 
 ``python2`` if your default environment is set for python 3.
@@ -57,11 +59,10 @@ Cray Clusters
 
 TODO
 
-.. note::
    Execution on Cray clusters requires to disable HDF5 file locking ``export HDF5_USE_FILE_LOCKING=FALSE`` if use ``h5py``.
 
 Build issues
 ============
 
 If you run into build issues and you clearly see a bug in SN4SP, please file an issue
-(or even better, a pull request) at https://github.com/sn4sp/sn4sp.
+(or even better, a pull request) at https://github.com/CoeGSS-Project/sn4sp.

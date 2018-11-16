@@ -28,7 +28,7 @@ coegss_outdataset_outputs_at: "coegss-network-reconstruction"
 # Cluster configurations and credentials
 ############################################
 # HLRS Vulcan cluster configuration
-coegss_hlrs_laki:
+coegss_hlrs_vulcan:
     credentials:
         host: "vulcan.hww.hlrs.de"
         user: "USERNAME"

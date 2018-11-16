@@ -9,10 +9,10 @@ about node attributes (synthetic population).
 It provides:
   1. a similarity network object which partially reproduce interface of `networkX` graphs
   2. functions to load synthetic population and store similarity graph in HDF5 format
-  3. API to synthetize networks on parallel and distributed facilities with MPI.
+  3. API to synthetize networks on parallel and distributed facilities with [MPI](https://www.mpi-forum.org/).
   4. preprocessing script (in order to provide the proper file structure to the main script)
-  5. Similarity Network script, which returns a HDF5 file containing the (weighted)
-     influence matrix based on the Lin Similarity. 
+  5. similarity network script, which returns a [HDF5](https://support.hdfgroup.org/HDF5/) file containing the (weighted)
+     influence matrix based on the [Lin similarity](http://dl.acm.org/citation.cfm?id=645527.657297). 
   6. Cloudify blueprint for submitting network reconstruction scripts to HPC clusters.
 
 More details can be found in CoeGSS deliverable.
@@ -41,6 +41,6 @@ and create a pull request (PR). We welcome all changes, big or small.
 
 Released under the Creative Commons Attribution 4.0 International license (see `LICENSE.txt`):
 
-   Copyright (C) 2018 SN4SP Developers
-   Sergiy Gogolenko <gogolenko@hlrs.de>
-   Fabio Saracco    <fabio@imt.it>
+    Copyright (C) 2018 SN4SP Developers
+    Sergiy Gogolenko <gogolenko@hlrs.de>
+    Fabio Saracco    <fabio@imt.it>
