@@ -107,11 +107,11 @@ def preprocessing(comm, size, rank):
         logging.info(' my_chunk=['+str(my_chunk[0])+', '+str(my_chunk[-1])+'] #'+str(rank))
         sys.stdout.flush()
 
-# I am reading data and putting them into a buffer
+        # I am reading data and putting them into a buffer
 
 
-ags_dataset = f["agent"]
-    ags_ids = np.array(ags_dataset["id"])
+        ags_dataset = f["agent"]
+        ags_ids = np.array(ags_dataset["id"])
         ags_hhi = np.array(ags_dataset["hh"])
         ags_wpi = np.array(ags_dataset["wp"])
         ags_sex = np.array(ags_dataset["sex"])
@@ -197,9 +197,9 @@ with h5py.File(out_file, 'w', driver='mpio', comm=comm, libver='latest') as g:
             
             
             
-                    ppd[i]=(int(ags_sex[j]), int(ags_age[j]), int(ags_rol[j]), int(ags_edu[j]), int(ags_emp[j]), int(np.round(ags_inc[j]/1000)), aux_wp_lat[0], aux_wp_lon[0], aux_hh_lat[0], aux_hh_lon[0],int(np.round(wp_hh/1000)))
+            ppd[i]=(int(ags_sex[j]), int(ags_age[j]), int(ags_rol[j]), int(ags_edu[j]), int(ags_emp[j]), int(np.round(ags_inc[j]/1000)), aux_wp_lat[0], aux_wp_lon[0], aux_hh_lat[0], aux_hh_lon[0],int(np.round(wp_hh/1000)))
 
-logging.info(' just finished #'+str(rank))
+    logging.info(' just finished #'+str(rank))
     logging.info(' We all finished #'+str(rank))
     
     

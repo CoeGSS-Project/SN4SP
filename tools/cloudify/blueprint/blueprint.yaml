@@ -25,16 +25,6 @@ inputs:
     ############################################
     # arguments of the script
     ############################################
-    synpop_path:
-        description: Path to the input HDF5 file with the synthetic population
-        default: ''
-        type: string
-
-    sn4sp_path:
-        description: Name to the output HDF5 file with the synthesized network
-        default: ''
-        type: string
-
     half_similarity:
         description: Half-similarity scale
         default: "5000"
@@ -70,7 +60,7 @@ inputs:
 
     coegss_sn4sp_repository_clone:
         description: Path to CoeGSS git repository clone
-        default: '~/SN4SP_tool'
+        default: '~/SN4SP'
         type: string
 
     python_module:
@@ -99,10 +89,6 @@ inputs:
     ############################################
     # Data publish
     ############################################
-    coegss_hlrs_datacatalogue_entrypoint:
-        description: entrypoint of the data catalogue
-        default: "https://ckan.coegss.hlrs.de"
-
     coegss_psnc_datacatalogue_entrypoint:
         description: entrypoint of the data catalogue
         default: "https://coegss1.man.poznan.pl"
@@ -116,7 +102,7 @@ inputs:
         default: ""
 
     coegss_input_dataset:
-        description: ID of the CKAN output dataset
+        description: ID of the CKAN input dataset
         default: ""
 
     coegss_output_dataset:

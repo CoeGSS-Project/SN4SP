@@ -10,6 +10,7 @@ stripe_size: "0.1"
 # Details of the application lifecycle
 ############################################
 python_module: '~/opt/pyenv/eagle.man.poznan.pl/coegss/2.7'
+coegss_sn4sp_repository_clone: '~/SN4SP'
 num_processes: "4"
 
 job_prefix: "coegss_network_reconstruction_"
@@ -18,9 +19,10 @@ job_prefix: "coegss_network_reconstruction_"
 monitor_entrypoint: "EXTERNAL_MONITOR_IP"
 
 # CKAN
-coegss_datacatalogue_key: "CKAN_API_KEY"
-coegss_input_dataset: "coegss-network-reconstruction"
-coegss_output_dataset: "coegss-network-reconstruction-results"
+coegss_hlrs_datacatalogue_key: "TODO"
+coegss_psnc_datacatalogue_key: "9aeafd3e-4ff4-4f3f-a130-dfb52185dff3"
+coegss_input_dataset:     'synthetic-network-example'
+coegss_output_dataset:    'synthetic-network-example-output'
 
 ############################################
 # Cluster configurations and credentials
