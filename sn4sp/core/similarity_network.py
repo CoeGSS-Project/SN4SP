@@ -29,11 +29,10 @@ class SimilarityGraph:
     with geo-spatial damping.
 
     Args:
-        attr_table:         table (or numpy array) with attribute values
-        attr_types:
-        attr_names:
-        comm:
+        attr_table:          table (or numpy array) with attribute values
         attr_types:          attribute types
+        attr_names:          names of the attributes
+        comm:                MPI communicator
         hss:                 half-similarity scale
         damping:             damping coefficien (if 0 use exponential damping)
         sample_fraction:     percentage of the population

@@ -57,6 +57,10 @@ def get_arguments():
                          dest="sample_fraction", type=float,
                          help="fraction of the sample (stripe size) for the parallel similarity calculation",
                          default=0.1 )
+    parser.add_argument( "-n", "--num-agents",
+                         dest="num_agents", type=int,
+                         help="maxim size of the population (if input file has more records, it will be truncated)",
+                         default=0 )
     return parser.parse_args()
 
 def main():
@@ -75,13 +79,20 @@ def main():
     # Handle command line arguments
     args=get_arguments()
 
+    output_filename=os.path.abspath(args.output)
+    if   os.path.isdir(output_filename):
+        output_filename=os.path.join(args.output, 'synthetic_network_hss_{0}_d_{1}.h5'.format(args.hss,args.damping))
+    elif not os.path.isdir(os.path.dirname(output_filename)):
+        raise ValueError( "Invalid output path '{0}'".fortmat(output_filename) )
+
     # Read input synthetic population and produce similarity network object out of it
-    sim_net=readwrite.read_attr_table_h5(args.input, hss=args.hss, damping=args.damping, sample_fraction=args.sample_fraction)
+    sim_net=readwrite.read_attr_table_h5( args.input, hss=args.hss,
+                                          damping=args.damping, sample_fraction=args.sample_fraction )
 
     # Compute similarity network edge probabilities and store in HDF5 edgelist file
     start_time=MPI.Wtime()
-    readwrite.write_edges_probabilities_h5( sim_net, os.path.join(args.output, 'synthetic_network_hss_{0}_d_{1}.h5'.format(args.hss,args.damping)),
-                                            chunk_len=int(1e4) )
+    readwrite.write_edges_probabilities_h5( sim_net, output_filename,
+                                            truncate=args.num_agents, chunk_len=int(1e4) )
     elapsed_time=MPI.Wtime() - start_time
     logging.info( 'total elapsed time={0}. # {1}'.format(datetime.timedelta(seconds=elapsed_time), MPI.COMM_WORLD.Get_rank()) )
 

@@ -30,7 +30,7 @@ inputs:
         default: ''
         type: string
 
-    synnet_path:
+    sn4sp_path:
         description: Name to the output HDF5 file with the synthesized network
         default: ''
         type: string
@@ -68,7 +68,7 @@ inputs:
         description: Configuration for the secondary HPC at HLRS to be used
         default: {}
 
-    coegss_simnet_repository_clone:
+    coegss_sn4sp_repository_clone:
         description: Path to CoeGSS git repository clone
         default: '~/SN4SP_tool'
         type: string
@@ -92,7 +92,7 @@ inputs:
     # Job prefix name
     job_prefix:
         description: Job name prefix in HPCs
-        default: 'coegss_synnet_'
+        default: 'coegss_sn4sp_'
         type: string
 
 
@@ -115,7 +115,11 @@ inputs:
         description: API Key to publish the outputs
         default: ""
 
-    coegss_outdataset_outputs_at:
+    coegss_input_dataset:
+        description: ID of the CKAN output dataset
+        default: ""
+
+    coegss_output_dataset:
         description: ID of the CKAN output dataset
         default: ""
 
@@ -127,7 +131,7 @@ node_templates:
             # external_monitor_entrypoint: { get_input: monitor_entrypoint }
             job_prefix: { get_input: job_prefix }
             base_dir: "$HOME"
-            workdir_prefix: "cloudify_coegss_synnet"
+            workdir_prefix: "cloudify_coegss_sn4sp"
             skip_cleanup: True
 
     preprocessing_job:
@@ -144,24 +148,25 @@ node_templates:
                 bootstrap: 'scripts/bootstrap_preprocessor.sh'
                 revert: 'scripts/revert_preprocessor.sh'
                 inputs:
-                    - { get_input: python_module }                      # python virtual environment
-                    - { get_input: coegss_simnet_repository_clone }     # repository with CoeGSS tools
+                    - { get_input: half_similarity }                       # Half-similarity Scale
+                    - { get_input: damping }                               # Damping Function
+                    - { get_input: stripe_size }                           # Percentage of the sample for the similarity calculation
+                    - { get_input: num_processes }                         # Number of MPI processes
 
-                    - { get_input: half_similarity }                    # Half-similarity Scale
-                    - { get_input: damping }                            # Damping Function
-                    - { get_input: stripe_size }                        # Percentage of the sample for the similarity calculation
-                    - { get_input: num_processes }                      # Number of MPI processes
+                    - { get_input: python_module }                         # python virtual environment
+                    - { get_input: coegss_sn4sp_repository_clone }         # repository with CoeGSS tools
 
-                    - { get_input: coegss_psnc_datacatalogue_entrypoint }       # CKAN entrypoint
-                    - { get_input: coegss_psnc_datacatalogue_key }              # CKAN API key
-                    - { get_input: coegss_outdataset_outputs_at }               # CKAN dataset
+                    - { get_input: coegss_psnc_datacatalogue_entrypoint }  # CKAN entrypoint
+                    - { get_input: coegss_psnc_datacatalogue_key }         # CKAN API key
+                    - { get_input: coegss_input_dataset }                  # CKAN input dataset
+                    - { get_input: coegss_output_dataset }                 # CKAN output dataset
             # skip_cleanup: False
             skip_cleanup: True
             # publish:
             #       - type: "CKAN"
             #         entrypoint: { get_input: coegss_psnc_datacatalogue_entrypoint }
             #         api_key: { get_input: coegss_psnc_datacatalogue_key }
-            #         dataset: { get_input: coegss_outdataset_outputs_at }
+            #         dataset: { get_input: coegss_output_dataset }
             #         file_path: "${CURRENT_WORKDIR}/Synthetic population_pdd.h5"
             #         name: "Sampled synthetic population"
             #         description: ""
@@ -183,24 +188,25 @@ node_templates:
                 bootstrap: 'scripts/bootstrap_network_sampler.sh'
                 revert: 'scripts/revert_network_sampler.sh'
                 inputs:
-                    - { get_input: python_module }                      # python virtual environment
-                    - { get_input: coegss_simnet_repository_clone }     # repository with CoeGSS tools
+                    - { get_input: half_similarity }                       # Half-similarity Scale
+                    - { get_input: damping }                               # Damping Function
+                    - { get_input: stripe_size }                           # Percentage of the sample for the similarity calculation
+                    - { get_input: num_processes }                         # Number of MPI processes
 
-                    - { get_input: half_similarity }                    # Half-similarity Scale
-                    - { get_input: damping }                            # Damping Function
-                    - { get_input: stripe_size }                        # Percentage of the sample for the similarity calculation
-                    - { get_input: num_processes }                      # Number of MPI processes
+                    - { get_input: python_module }                         # python virtual environment
+                    - { get_input: coegss_sn4sp_repository_clone }         # repository with CoeGSS tools
 
-                    - { get_input: coegss_psnc_datacatalogue_entrypoint }       # CKAN entrypoint
-                    - { get_input: coegss_psnc_datacatalogue_key }              # CKAN API key
-                    - { get_input: coegss_outdataset_outputs_at }               # CKAN dataset
+                    - { get_input: coegss_psnc_datacatalogue_entrypoint }  # CKAN entrypoint
+                    - { get_input: coegss_psnc_datacatalogue_key }         # CKAN API key
+                    - { get_input: coegss_input_dataset }                  # CKAN input dataset
+                    - { get_input: coegss_output_dataset }                 # CKAN output dataset
             # skip_cleanup: False
             skip_cleanup: True
             # publish:
             #       - type: "CKAN"
             #         entrypoint: { get_input: coegss_psnc_datacatalogue_entrypoint }
             #         api_key: { get_input: coegss_psnc_datacatalogue_key }
-            #         dataset: { get_input: coegss_outdataset_outputs_at }
+            #         dataset: { get_input: coegss_output_dataset }
             #         file_path: "${CURRENT_WORKDIR}/Synthetic network.h5"
             #         name: "Synthetic network"
             #         description: "Synthetic network produced by parallel job"

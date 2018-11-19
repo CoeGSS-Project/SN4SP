@@ -14,6 +14,18 @@
 ## Bootstrapping for network reconstruction execution
 ############################################################
 
+# Input parameters:
+#   $1 - half-similarity scale
+#   $2 - damping Function
+#   $3 - percentage of the sample for the similarity calculation
+#   $4 - number of MPI processes
+#   $5 - Python virtual environment
+#   $6 - repository with CoeGSS tools
+#   $7 - CKAN entrypoint
+#   $8 - CKAN API key
+#   $9 - CKAN input dataset
+#  $10 - CKAN output dataset
+
 FILE="coegss_network_sampler_submit.sh"
 
 # Create workspace for extra-large output files
@@ -42,7 +54,7 @@ MPIEXEC=\${APRUN:-\${SRUN:-mpiexec}}
 module load python/2.7.14
 module load hdf5/1.10.1_openmpi-2.1.2_gcc620
 
-. $1/bin/activate
-\${MPIEXEC} -n $6 python $2/SiNe4SyPo_piedmont.py ${CURRENT_WORKDIR}/synthetic_population_ppd.h5 -o ${WS_PREFIX:-${CURRENT_WORKDIR}}/synthetic_network.h5 -hss $3 -d $4 -p $5
+. $5/bin/activate
+\${MPIEXEC} -n $4 python $6/simnet4synpop.py ${CURRENT_WORKDIR}/synthetic_population_ppd.h5 -o ${WS_PREFIX:-${CURRENT_WORKDIR}}/synthetic_network.h5 -hss $1 -d $2 -p $3
 deactivate
 EOM

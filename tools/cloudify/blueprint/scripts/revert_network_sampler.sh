@@ -14,17 +14,26 @@
 ## Cleaning up for network reconstruction execution
 ############################################################
 
+# Store similarity network parameters
+SN4SP_SAMPLING_PARAMS="half-similarity scale: $1, dumping: $2, sampling fraction: $3"
+
+# Skip first 4 arguments required for job bootstrapping ONLY
+# Remaining arguments:
+#   $1 - Python virtual environment
+#   $2 - repository with CoeGSS tools
+#   $3 - CKAN entrypoint
+#   $4 - CKAN API key
+#   $5 - CKAN dataset with input files
+#   $6 - CKAN dataset with output files
+shift;shift;shift;shift
+
 # Go to the work directory
 cd ${CURRENT_WORKDIR}
 
-# # Skip first 8 arguments required for job bootstrapping
-# shift;shift;shift;shift;shift;shift;shift;shift
+SBATCH_FILE="coegss_network_sampler_submit.sh"
+WS_PREFIX=`ws_find $(basedir ${CURRENT_WORKDIR}) 2>/dev/null`
 
-FILE="coegss_network_sampler_submit.sh"
-
-if [ -f $FILE ]; then
-    rm $FILE
-fi
+rm -rf ${SBATCH_FILE}
 
 # TODO: move ERR/OUT concatenation to script
 ERR_FILE=`find . -name "*.err" | head -n 1`
@@ -33,8 +42,7 @@ ERR_FILE=`find . -name "*.err" | head -n 1`
 OUT_FILE=`find . -name "*.out" | head -n 1`
 [[ ! -z "${OUT_FILE}" ]] && cat ${OUT_FILE} >> ./stdout_sampler.txt
 
-# @TODO: use workspace
-SYNNET_FILE=`find . -name "Synthetic network_hss*h5" | head -n 1`
+SYNNET_FILE=${WS_PREFIX:-${CURRENT_WORKDIR}}/synthetic_network.h5
 
 # TODO: remove debugging
 echo """[
@@ -56,7 +64,7 @@ echo """[
         \"${SYNNET_FILE}\",
 	{
 	    \"name\" : \"Synthetic network\",
-	    \"description\" : \"Synthetic network with hss=$3 and dump=$4 produced by job $(basename ${CURRENT_WORKDIR})\"
+	    \"description\" : \"Synthetic network (${SN4SP_SAMPLING_PARAMS}) produced by job $(basename ${CURRENT_WORKDIR})\"
 	}
     ]
 ]""" >> ./stdout_sampler.txt
@@ -81,19 +89,18 @@ echo """[
         \"${SYNNET_FILE}\",
 	{
 	    \"name\" : \"Synthetic network\",
-	    \"description\" : \"Synthetic network with hss=$3 and dump=$4 produced by job $(basename ${CURRENT_WORKDIR})\"
+	    \"description\" : \"Synthetic network (${SN4SP_SAMPLING_PARAMS}) produced by job $(basename ${CURRENT_WORKDIR})\"
 	}
     ]
 ]""" | python $2/tools/cloudify/ckan_upload_data.py \
-       -ip "$7" -k "$8" -d "$9-output" 2> xyz2.err
+       -ip "$3" -k "$4" -d "$6" 2> xyz2.err
 
 # # Clean up data
-# rm -rf ./'Synthetic population_ppd.h5' $FILE \
+# rm -rf ./synthetic_population_ppd.h5 $FILE \
 #    ${CURRENT_WORKDIR}/stderr_sampler.txt  ${CURRENT_WORKDIR}/stdout_sampler.txt ${ERR_FILE} ${OUT_FILE}
 
 # Release workspaces created by bootstrap
 # TODO: test with ws_find
 # NOTE: this code produces error if workspace is already released
 [[ ! -z "`which ws_allocate 2>/dev/null`" ]] && ws_release $(basename ${CURRENT_WORKDIR}) #${CURRENT_WORKDIR}
-
-echo ""
+echo '' # avoid error status if workspace was already released

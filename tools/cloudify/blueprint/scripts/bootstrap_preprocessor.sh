@@ -14,6 +14,18 @@
 ## Bootstrapping for network reconstruction execution
 ############################################################
 
+# Input parameters:
+#   $1 - half-similarity scale
+#   $2 - damping Function
+#   $3 - percentage of the sample for the similarity calculation
+#   $4 - number of MPI processes
+#   $5 - Python virtual environment
+#   $6 - repository with CoeGSS tools
+#   $7 - CKAN entrypoint
+#   $8 - CKAN API key
+#   $9 - CKAN input dataset
+#  $10 - CKAN output dataset
+
 FILE="coegss_preprocess_submit.sh"
 
 # Create workspace for extra-large output files
@@ -43,14 +55,14 @@ MPIEXEC=\${APRUN:-\${SRUN:-mpiexec}}
 module load python/2.7.14
 module load hdf5/1.10.1_openmpi-2.1.2_gcc620
 
-. $1/bin/activate
-\${MPIEXEC} -n $6 python $2/preprocesser_piedmont.py
+. $5/bin/activate
+\${MPIEXEC} -n $4 python $6/preprocesser_piedmont.py
 deactivate
 EOM
 
 # Get data
 # TODO: download everything from dataset if requested
-python $2/tools/cloudify/ckan_download_data.py \
-       -ip $7 -d $9 -o ${CURRENT_WORKDIR} \
+python $6/tools/cloudify/ckan_download_data.py \
+       -ip $7 -k $8 -d $9 -o ${CURRENT_WORKDIR} \
        'Synthetic population' 'Geodata' \
        >>${CURRENT_WORKDIR}/stdout_preprocessor.txt 2>>${CURRENT_WORKDIR}/stderr_preprocessor.txt

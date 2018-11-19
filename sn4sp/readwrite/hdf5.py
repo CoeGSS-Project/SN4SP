@@ -9,7 +9,7 @@
 ****
 HDF5
 ****
-Read synthetic population to similarity network niodes from HDF5 file
+Read synthetic population to similarity network nodes from HDF5 file
 and writes similarity network as edge lists to HDF5 file.
 """
 __author__ = '\n'.join(['Sergiy Gogolenko <gogolenko@hlrs.de>',
@@ -27,7 +27,8 @@ import h5py
 
 from sn4sp.core import SimilarityGraph
 
-def read_attr_table_h5(path, attr_types=None, attr_group='SPP10pc', attr_values_dataset='ppd', attr_types_dataset='da', **kwargs):
+def read_attr_table_h5(path, attr_types=None, attr_group='SPP10pc',
+                       attr_values_dataset='ppd', attr_types_dataset='da', truncate=None, **kwargs):
     """ Read node (agent) attributes in HDF5 format.
 
     Args:
@@ -57,13 +58,15 @@ def read_attr_table_h5(path, attr_types=None, attr_group='SPP10pc', attr_values_
             if not hasattr(attr_types, '__iter__'):
                 raise ValueError( r'List of attribute types "attr_types" is not iterable (type={0})'.format(type(attr_types)) )
 
-            vertex_attrs=numpy.array(fp[attr_group].get(attr_values_dataset))[:1000]
+            vertex_attrs=numpy.array(fp[attr_group].get(attr_values_dataset))
+            if truncate:
+                vertex_attrs=vertex_attrs[:truncate]
             # numpy.savetxt('test_data.csv', vertex_attrs, fmt='%3.4f', delimiter=', ', newline='],\n[',
             #               header=','.join(vertex_attrs.dtype.names), footer='', comments='# ')
             if len(attr_types) != len(vertex_attrs.dtype.names):
                 raise ValueError( r'List of attribute types [{0}] is incompatible with attribute data [{1}]'.\
-                                  format( ','.join(map(str,attr_types)),
-                                          ','.join(vertex_attrs.dtype.names)) )
+                                  format(','.join(map(str,attr_types)),
+                                         ','.join(vertex_attrs.dtype.names)) )
         finally:
             fp.close()
             #raise IOError('cannot read input file "{0}"'.format(path))
@@ -75,11 +78,12 @@ def read_attr_table_h5(path, attr_types=None, attr_group='SPP10pc', attr_values_
 
         for attr_name, attr_type in zip(vertex_attrs.dtype.names, attr_types):
             if attr_type == 'c':
-                logging.debug( 'categorie codes for {0}=[{1}]'.format(attr_name, ','.join(map(str, numpy.unique(vertex_attrs[attr_name])))) )
+                logging.debug( 'categorie codes for {0}=[{1}]'.\
+                               format(attr_name, ','.join(map(str, numpy.unique(vertex_attrs[attr_name])))) )
     return SimilarityGraph(vertex_attrs, attr_types, **kwargs)
 
 def write_edges_probabilities_h5(G, path, network_group="SimNet", edges_dataset="edge_list", chunk_len=int(1e4)):
-    """Write edge probabilities of the similarity network G in edge-list format to HDF5 file.
+    """ Write edge probabilities of the similarity network G in edge-list format to HDF5 file.
     Parameters
     ----------
     G : similarity network

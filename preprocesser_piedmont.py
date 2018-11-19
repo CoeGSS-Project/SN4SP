@@ -58,9 +58,9 @@ def preprocessing(comm, size, rank):
         out_file=home+'Documents/Lavoro/Similarity_Networks/synthPop_Piedimont_10pc_2011_ppd.h5'
         helper=home+'Documents/Lavoro/Similarity_Networks/Piemonte_NUTS3_to_LAU2_gdf.pkl.gz'
     else:
-        in_file=os.path.join(os.getcwd(), 'synthPop_Piedimont_10pc_2011.h5')
-        out_file=os.path.join(os.getcwd(), 'synthPop_Piedimont_10pc_2011_ppd.h5')
-        helper=os.path.join(os.getcwd(), 'resources', 'Italy', 'boundaries', 'Piemonte_NUTS3_to_LAU2_gdf.pkl.gz')
+        in_file=os.path.join(os.getcwd(), 'Synthetic population.h5')
+        out_file=os.path.join(os.getcwd(), 'synthetic_population_ppd.h5')
+        helper=os.path.join(os.getcwd(), 'Geodata.gz')
 
     with h5py.File(in_file, 'r') as f:
         logging.info(' starting #'+str(rank))

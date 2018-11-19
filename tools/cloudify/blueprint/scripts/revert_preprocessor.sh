@@ -14,11 +14,18 @@
 ## Cleaning up for network reconstruction execution
 ############################################################
 
+# Skip first 4 arguments required for job bootstrapping ONLY
+# Remaining parameters:
+#   $1 - Python virtual environment
+#   $2 - repository with CoeGSS tools
+#   $3 - CKAN entrypoint
+#   $4 - CKAN API key
+#   $5 - CKAN dataset with input files
+#   $6 - CKAN dataset with output files
+shift;shift;shift;shift
+
 # Go to the work directory
 cd ${CURRENT_WORKDIR}
-
-# # Skip first 8 arguments required for job bootstrapping
-# shift;shift;shift;shift;shift;shift;shift;shift
 
 FILE="coegss_preprocess_submit.sh"
 
@@ -32,6 +39,7 @@ ERR_FILE=`find . -name "*.err" | head -n 1`
 
 OUT_FILE=`find . -name "*.out" | head -n 1`
 [[ ! -z "${OUT_FILE}" ]] && cat ${OUT_FILE} >> ./stdout_preprocessor.txt
+
 
 # Upload results to CKAN
 echo """[
@@ -50,27 +58,14 @@ echo """[
 	}
     ],
     [
-        \"Synthetic population_ppd.h5\",
+        \"synthetic_population_ppd.h5\",
 	{
 	    \"name\" : \"Spatially distributed synthetic population\",
 	    \"description\" : \"Spatially distributed synthetic population produced by job $(basename ${CURRENT_WORKDIR})\"
 	}
     ]
 ]""" | python $2/tools/cloudify/ckan_upload_data.py \
-       -ip "$7" -k "$8" -d "$9-output" 2> xyz0.err
-
-# Upload stderr and stdout files
-# curl -H"Authorization: $2" $1/api/action/resource_create \
-#      --form upload=@./stderr_preprocessor.txt \
-#      --form package_id=$3 \
-#      --form name=stderr_preprocessor.txt \
-#      --form description='Standard error file'
-
-# curl -H"Authorization: $2" $1/api/action/resource_create \
-#      --form upload=@./stdout_preprocessor.txt \
-#      --form package_id=$3 \
-#      --form name=stdout_preprocessor.txt \
-#      --form description='Standard output file'
+       -ip "$3" -k "$4" -d "$6" 2> xyz0.err
 
 # # Clean up data
 # rm -rf ./'Synthetic population.h5' ./'Synthetic population_ppd.h5' ./'Geodata.gz' \

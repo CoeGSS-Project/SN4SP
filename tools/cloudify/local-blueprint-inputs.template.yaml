@@ -1,8 +1,6 @@
 #############################
 # Provider specific inputs
 #############################
-synpop_path: 'synthPop_Piedimont_10pc_2011_ppd.h5'
-synnet_path: '.'
 
 half_similarity: "5000"
 damping: "0"
@@ -11,7 +9,6 @@ stripe_size: "0.1"
 ############################################
 # Details of the application lifecycle
 ############################################
-# python_module: '~/opt/pyenv/cl3fr2-int/coegss/2.7'
 python_module: '~/opt/pyenv/eagle.man.poznan.pl/coegss/2.7'
 num_processes: "4"
 
@@ -22,7 +19,8 @@ monitor_entrypoint: "EXTERNAL_MONITOR_IP"
 
 # CKAN
 coegss_datacatalogue_key: "CKAN_API_KEY"
-coegss_outdataset_outputs_at: "coegss-network-reconstruction"
+coegss_input_dataset: "coegss-network-reconstruction"
+coegss_output_dataset: "coegss-network-reconstruction-results"
 
 ############################################
 # Cluster configurations and credentials
