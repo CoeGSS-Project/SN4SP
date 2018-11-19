@@ -44,31 +44,6 @@ OUT_FILE=`find . -name "*.out" | head -n 1`
 
 SYNNET_FILE=${WS_PREFIX:-${CURRENT_WORKDIR}}/synthetic_network.h5
 
-# TODO: remove debugging
-echo """[
-    [
-        \"stderr_sampler.txt\",
-	{
-	    \"name\" : \"Sampler job error file\",
-	    \"description\" : \"Error file for network sampling job $(basename ${CURRENT_WORKDIR})\"
-	}
-    ],
-    [
-        \"stdout_sampler.txt\",
-	{
-	    \"name\" : \"Sampler job output file\",
-	    \"description\" : \"Console output for network sampling job $(basename ${CURRENT_WORKDIR})\"
-	}
-    ],
-    [
-        \"${SYNNET_FILE}\",
-	{
-	    \"name\" : \"Synthetic network\",
-	    \"description\" : \"Synthetic network (${SN4SP_SAMPLING_PARAMS}) produced by job $(basename ${CURRENT_WORKDIR})\"
-	}
-    ]
-]""" >> ./stdout_sampler.txt
-
 # Upload results to CKAN
 echo """[
     [

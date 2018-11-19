@@ -35,6 +35,7 @@ touch ${CURRENT_WORKDIR}/stdout_sampler.txt
 touch ${CURRENT_WORKDIR}/stderr_sampler.txt
 
 # Create script for putting in HPC cluster queue
+# TODO: remove truncate to 1000 agents `-n 1000` after review
 cat > $FILE <<- EOM
 #!/bin/bash -l
 
@@ -55,6 +56,6 @@ module load python/2.7.14
 module load hdf5/1.10.1_openmpi-2.1.2_gcc620
 
 . $5/bin/activate
-\${MPIEXEC} -n $4 python $6/simnet4synpop.py ${CURRENT_WORKDIR}/synthetic_population_ppd.h5 -o ${WS_PREFIX:-${CURRENT_WORKDIR}}/synthetic_network.h5 -hss $1 -d $2 -p $3
+\${MPIEXEC} -n $4 python $6/tools/simnet4synpop.py ${CURRENT_WORKDIR}/synthetic_population_ppd.h5 -o ${WS_PREFIX:-${CURRENT_WORKDIR}}/synthetic_network.h5 -hss $1 -d $2 -p $3 -n 1000
 deactivate
 EOM

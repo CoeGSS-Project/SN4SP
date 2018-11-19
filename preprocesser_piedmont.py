@@ -58,9 +58,9 @@ def preprocessing(comm, size, rank):
         out_file=home+'Documents/Lavoro/Similarity_Networks/synthPop_Piedimont_10pc_2011_ppd.h5'
         helper=home+'Documents/Lavoro/Similarity_Networks/Piemonte_NUTS3_to_LAU2_gdf.pkl.gz'
     else:
-        in_file=os.path.join(os.getcwd(), 'Synthetic population.h5')
+        in_file=os.path.join(os.getcwd(), 'synthetic_population.h5')
         out_file=os.path.join(os.getcwd(), 'synthetic_population_ppd.h5')
-        helper=os.path.join(os.getcwd(), 'Geodata.gz')
+        helper=os.path.join(os.getcwd(), 'geodata.gz')
 
     with h5py.File(in_file, 'r') as f:
         logging.info(' starting #'+str(rank))
@@ -144,8 +144,8 @@ def preprocessing(comm, size, rank):
     sys.stdout.flush()
 
 
-with h5py.File(out_file, 'w', driver='mpio', comm=comm, libver='latest') as g:
-    ppd_g=g.create_group('SPP10pc')
+    with h5py.File(out_file, 'w', driver='mpio', comm=comm, libver='latest') as g:
+        ppd_g=g.create_group('SPP10pc')
         # pre-processed data
         ppd_da=ppd_g.create_dataset('da', data=np.array(['c', 'o', 'c','c', 'c', 'o','g','g','g','g','o']))
         

@@ -26,23 +26,24 @@ git clone https://github.com/CoeGSS-Project/SN4SP.git
 ```
 2. Create dataset with input resources.
    This dataset must contain at least the following resources:
-     - resource with name `Synthetic population` that corresponds to input HDF5 file with synthetic population
-     - resource with name `Geodata` that corresponds to input GZipped PKL file with additional geo-shape data
+     - resource with name `Synthetic population` that corresponds to input HDF5 file with synthetic population;
+     - resource with name `Geodata` that corresponds to input GZipped PKL file with additional geo-shape data.
+
    For the test purposes, you can use dataset ["Synthetic network example"](https://coegss1.man.poznan.pl/dataset/synthetic-network-example).
 3. Create empty CKAN dataset for output resources.
 4. Specify inputs in YAML file as described in subsection "Inputs" below.
    You can use file [`local-blueprint-inputs.template.yaml`](https://raw.githubusercontent.com/CoeGSS-Project/SN4SP/master/tools/cloudify/local-blueprint-inputs.template.yaml) as a template.
 5. Create profile on Cloudify VM:
-```console
-   $ cfy profiles use 111.222.333.444 -u admin -p admin -t default_tenant
+```sh
+   cfy profiles use 111.222.333.444 -u admin -p admin -t default_tenant
 ```
 6. Run parallel job using the blueprint:
-```console
-   $ ./network-reconstruction-sbatch-up.sh
+```sh
+   ./network-reconstruction-sbatch-up.sh
 ```
 7. Uninstall blueprint:
-```console
-   $ ./network-reconstruction-sbatch-down.sh
+```sh
+   ./network-reconstruction-sbatch-down.sh
 ```
 8. Check results in the CKAN dataset for outputs (created in item 3).
 

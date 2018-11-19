@@ -61,3 +61,4 @@ MANIFEST
 ############################################################
 sn4sp/version.py
 tools/cloudify/local-blueprint-inputs.yaml
+tools/cloudify/local-blueprint-inputs-all.yaml

@@ -60,8 +60,8 @@ echo """[
     [
         \"synthetic_population_ppd.h5\",
 	{
-	    \"name\" : \"Spatially distributed synthetic population\",
-	    \"description\" : \"Spatially distributed synthetic population produced by job $(basename ${CURRENT_WORKDIR})\"
+	    \"name\" : \"Preprocessed synthetic population\",
+	    \"description\" : \"Preprocessed synthetic population produced by job $(basename ${CURRENT_WORKDIR})\"
 	}
     ]
 ]""" | python $2/tools/cloudify/ckan_upload_data.py \

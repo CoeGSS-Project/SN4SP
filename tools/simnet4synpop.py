@@ -86,13 +86,12 @@ def main():
         raise ValueError( "Invalid output path '{0}'".fortmat(output_filename) )
 
     # Read input synthetic population and produce similarity network object out of it
-    sim_net=readwrite.read_attr_table_h5( args.input, hss=args.hss,
-                                          damping=args.damping, sample_fraction=args.sample_fraction )
+    sim_net=readwrite.read_attr_table_h5( args.input, truncate=args.num_agents,
+                                          hss=args.hss, damping=args.damping, sample_fraction=args.sample_fraction )
 
     # Compute similarity network edge probabilities and store in HDF5 edgelist file
     start_time=MPI.Wtime()
-    readwrite.write_edges_probabilities_h5( sim_net, output_filename,
-                                            truncate=args.num_agents, chunk_len=int(1e4) )
+    readwrite.write_edges_probabilities_h5( sim_net, output_filename, chunk_len=int(1e4) )
     elapsed_time=MPI.Wtime() - start_time
     logging.info( 'total elapsed time={0}. # {1}'.format(datetime.timedelta(seconds=elapsed_time), MPI.COMM_WORLD.Get_rank()) )
 
