@@ -35,15 +35,15 @@ git clone https://github.com/CoeGSS-Project/SN4SP.git
    You can use file [`local-blueprint-inputs.template.yaml`](https://raw.githubusercontent.com/CoeGSS-Project/SN4SP/master/tools/cloudify/local-blueprint-inputs.template.yaml) as a template.
 5. Create profile on Cloudify VM:
 ```sh
-   cfy profiles use 111.222.333.444 -u admin -p admin -t default_tenant
+cfy profiles use 111.222.333.444 -u admin -p admin -t default_tenant
 ```
 6. Run parallel job using the blueprint:
 ```sh
-   ./network-reconstruction-sbatch-up.sh
+./network-reconstruction-sbatch-up.sh
 ```
 7. Uninstall blueprint:
 ```sh
-   ./network-reconstruction-sbatch-down.sh
+./network-reconstruction-sbatch-down.sh
 ```
 8. Check results in the CKAN dataset for outputs (created in item 3).
 
@@ -146,42 +146,42 @@ There are 2 fast options for deployment:
    >>> 111.222.333.444
 ```
 4. Use this IP to create profile on Cloudify VM:
-```console
-   $ cfy profiles use 111.222.333.444 -u admin -p admin -t default_tenant
+```sh
+cfy profiles use 111.222.333.444 -u admin -p admin -t default_tenant
 ```
 5. Run parallel job using the blueprint:
-```console
-   $ ./network-reconstruction-sbatch-up.sh
+```sh
+./network-reconstruction-sbatch-up.sh
 ```
 6. Uninstall blueprint:
-```console
-   $ ./network-reconstruction-sbatch-down.sh
+```sh
+./network-reconstruction-sbatch-down.sh
 ```
 Read more about installation [here](https://cloudify.co/guide/3.1/installation-cli.htm).
 
 ### Docker
 
 1. run docker container:
-```console
-   $ sudo docker run --name cfy_manager_local -d --restart unless-stopped -v /sys/fs/cgroup:/sys/fs/cgroup:ro --tmpfs /run --tmpfs /run/lock --security-opt seccomp:unconfined --cap-add SYS_ADMIN -p 80:80 -p 8000:8000 cloudifyplatform/community:18.7.23
-   $ docker exec -it cfy_manager_local /bin/bash
+```sh
+sudo docker run --name cfy_manager_local -d --restart unless-stopped -v /sys/fs/cgroup:/sys/fs/cgroup:ro --tmpfs /run --tmpfs /run/lock --security-opt seccomp:unconfined --cap-add SYS_ADMIN -p 80:80 -p 8000:8000 cloudifyplatform/community:18.7.23
+docker exec -it cfy_manager_local /bin/bash
 ```
 2. Use this IP to create profile on Cloudify VM:
-```console
-   $ cfy profiles use 192.168.122.22 -u admin -p admin -t default_tenant
-   $ cfy status
+```sh
+cfy profiles use 192.168.122.22 -u admin -p admin -t default_tenant
+cfy status
 ```
 3. Copy blueprint to docker container:
-```console
-   $ docker cp ./tools/cloudify cfy_manager_local:/target
-   $ cd ./tools/cloudify/
+```sh
+docker cp ./tools/cloudify cfy_manager_local:/target
+cd ./tools/cloudify/
 ```
 4. Run parallel job using the blueprint:
-```console
-   $ ./network-reconstruction-sbatch-up.sh
+```sh
+./network-reconstruction-sbatch-up.sh
 ```
 5. Uninstall blueprint:
-```console
-   $ ./network-reconstruction-sbatch-down.sh
+```sh
+./network-reconstruction-sbatch-down.sh
 ```
 Read more about installation with Docker [here](https://cloudify.co/getting-started/).

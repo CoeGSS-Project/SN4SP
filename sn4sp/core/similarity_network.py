@@ -9,6 +9,8 @@
 """
 from __future__ import division, absolute_import, print_function
 
+from sn4sp import parallel
+
 # TODO: switch from logging to warnings in library core
 import warnings
 import logging
@@ -34,7 +36,7 @@ class SimilarityGraph:
         attr_names:          names of the attributes
         comm:                MPI communicator
         hss:                 half-similarity scale
-        damping:             damping coefficien (if 0 use exponential damping)
+        damping:             damping coefficient (if 0 use exponential damping)
         sample_fraction:     percentage of the population
     """
     R_EARTH=6.3781*10**6    # Earth radius in meters
@@ -68,7 +70,7 @@ class SimilarityGraph:
 
         # Convert attributes from degrees to radians
         if len(attr_name_groups['g']) % 2 != 0:
-            raise ValueError( "number of geo-attribuets must be odd to hold (longitude,lattitude) pairs,"\
+            raise ValueError( "number of geo-attributes must be odd to hold (longitude,latitude) pairs,"\
                               " whereas we have {0} geo-attributes".format(len(attr_name_groups['g'])))
 
         self.geo_attrs=numpy.array( [numpy.radians(attr_table[attr_name]) \
@@ -132,7 +134,7 @@ class SimilarityGraph:
     def edge_probability(self, a, b):
         """ Probability of edge in the similarity graph based on geo-damped Lin similarity.
 
-        Edge probability consistes of two independent contributions:
+        Edge probability consists of two independent contributions:
         - probability induced by graphical distance between agents
         - probability induced by similarity between agents
         """
@@ -182,10 +184,10 @@ class SimilarityGraph:
         # First, find the frequency of agents sharing all attributes shared by the two analysed nodes.
         # The idea is that the lower the number of agents sharing the same attribute,
         # the more information this shared attribute contains about the two agents.
-        # Since attributes are dependent, one must estimete the probability (get frequency)
+        # Since attributes are dependent, one must estimate the probability (get frequency)
         # of observing all different attributes at the same time. If they were independent,
         # one might handle attributes independently by computing their contributions separately
-        # and suming up.
+        # and summing up.
 
         # if self.categorical_attr[a] == self.categorical_attr[b]:
         #     similar_nodes=self.sampled_ordinal_attrs[self.categorical_attr[a] == self.sampled_ordinal_attrs]
@@ -248,7 +250,7 @@ class SimilarityGraph:
 
         return prob_geo*prob_lin
 
-    def edges_probabilities(self):
+    def edges_probabilities(self, *args, **kwargs):
         """Iterator over upper triangular part of the edge "probability" matrix.
 
         Returns
@@ -258,59 +260,21 @@ class SimilarityGraph:
             where p is a probability of edge.
         Notes
         -----
-        Do not conucse this upper triangular matrix with upper triangular part of 
+        Do not confuse this upper triangular matrix with upper triangular part of 
         a graph probability matrix where each element (i,j) corresponds to probability
-        of edge existance. In our matrix, edge probabilities are not normalized.
+        of edge existence. In our matrix, edge probabilities are not normalized.
         Examples
         --------
         >>> [(i,j,p) for i,j,p in G.edges_probabilities()]
         """
         # TODO: replace `edges_probabilities` with edge view
 
-        comm_rank=self.comm.Get_rank()
-        comm_size=self.comm.Get_size()
-
         # Estimate number of potential edges (couples)
-        num_vertices=len(self)
-        num_couples=int((num_vertices - 1)*num_vertices/2)  # total number of couples (potential edges) in the graph.
-        def pos2ij(pos):
-            """Convert position in an upper triangular matrix to a pair of indices (i,j)."""
-            i=int(num_vertices - sqrt((num_vertices-.5)**2 - 2.*pos) - 0.5) # take floor with `int`
-            j=int(pos + i*(i + 1)/2 - i*(num_vertices - 1) + 1)
-            return i,j
-        def ij2pos(i,j):
-            """Convert pair of indices (i,j) to a position in an upper triangular matrix."""
-            return int(i*num_vertices - i*(i + 3)/2 + j)
-
-        # Distribute computational work (couples) between MPI process.
-        couples_per_process=num_couples // comm_size  # ceil(num_couples/num_processes)
-        couples_remainder=num_couples % comm_size
-        
-        # (i0,j0) - indices of the first couple to handle in the current process.
-        # (ie,je) - indices of the last couple to handle in the current process
-        #           (if the process is last use the next after the last valid couple of indices).
-        if comm_rank < couples_remainder:
-            i0,j0=pos2ij((couples_per_process+1)*comm_rank)
-            ie,je=pos2ij((couples_per_process+1)*(comm_rank + 1))
-        else:
-            i0,j0=pos2ij(couples_per_process*comm_rank + couples_remainder)
-            ie,je = (num_vertices - 1, num_vertices) if comm_rank + 1 == comm_size else \
-                    pos2ij(couples_per_process*(comm_rank + 1) + couples_remainder)
-        logging.info( 'Iterate over couples between {0} and {1}, number of couples {2}'.\
-                      format((i0,j0), (ie,je), ij2pos(ie,je)-ij2pos(i0,j0)) )
-
-        # Iterate over couples
-        i, j = i0, j0
-        while i!=ie or j!=je:
+        for i, j in parallel.triu_index(len(self), self.comm, *args, **kwargs):
             yield i, j, self.edge_probability(i,j)
 
-            j+=1
-            if j == num_vertices:  # move to the next row
-                i+=1
-                j=i+1
-
     def __len__(self):
-        """Return the number of nodes. Use: `len(G)`.
+        """ Return the number of nodes. Use: `len(G)`.
 
         Returns:
             The number of nodes in the graph.

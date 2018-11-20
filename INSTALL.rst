@@ -3,6 +3,7 @@ Building and installing SN4SP
 
 **IMPORTANT**: the below notes are about building SN4SP, which is
 the only way to install SN4SP for this moment.
+``pip`` support is not implemented yet.
 
 .. Contents::
 

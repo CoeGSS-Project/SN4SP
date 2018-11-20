@@ -30,8 +30,8 @@ from .version import version as __version__
 __all__ = []
 
 from . import core
-import sn4sp.readwrite
-from sn4sp.readwrite import *
+from . import parallel
+from . import readwrite
 
 # # Make these accessible from sn4py namespace
 # # but not imported in from sn4py import *
@@ -43,7 +43,7 @@ from sn4sp.readwrite import *
 
 __all__.extend(['__version__',])
 __all__.extend(core.__all__)
-__all__.extend(['readwrite',])
+__all__.extend(['readwrite', 'parallel'])
 
 # def _sanity_check():
 #     """

@@ -154,8 +154,9 @@ def setup_package():
     # Rewrite the version file
     write_version_py()
 
-    packages = ["sn4sp",
-                "sn4sp.readwrite"]
+    packages = [ "sn4sp",
+                 "sn4sp.parallel",
+                 "sn4sp.readwrite" ]
     data = [] # TODO: specify
     package_data = {} # TODO: specify
 

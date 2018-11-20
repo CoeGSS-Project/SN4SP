@@ -22,17 +22,17 @@ More details can be found in CoeGSS deliverable.
 ## Install
 
 Basic installation via `setup-tools`:
-```console
-    $ mpirun -n 1 python setup.py install
+```sh
+mpiexec -n 1 python setup.py install
 ```
-For additional details, please see `INSTALL.rst`.
+For additional details, please see [`INSTALL.rst`](INSTALL.rst).
 
 ## Simple example
 
-```pycon
-    >>> import sn4sp
-    >>> G = sn4sp.readwrite.read_attr_table_h5("synthetic_population.h5")
-    >>> G = sn4sp.readwrite.write_edges_probabilities_h5(G, "synthetic_network.h5")
+```python
+import sn4sp
+G = sn4sp.readwrite.read_attr_table_h5("synthetic_population.h5")
+G = sn4sp.readwrite.write_edges_probabilities_h5(G, "synthetic_network.h5")
 ```
 
 ## Bugs
