@@ -73,8 +73,8 @@ def triu_even_index(dims, comm):
         ie,je = (dims - 1, dims) if comm_rank + 1 == comm_size else \
                 pos2ij(couples_per_process*(comm_rank + 1) + couples_remainder)
 
-    # logging.info( 'Iterate over couples between {0} and {1}, number of couples {2}'.\
-    #               format((i0,j0), (ie,je), ij2pos(ie,je)-ij2pos(i0,j0)) )
+    logging.info( 'Iterate over couples between {0} and {1}, number of couples {2}'.\
+                  format((i0,j0), (ie,je), ij2pos(ie,je)-ij2pos(i0,j0)) )
 
     # Iterate over couples
     i, j = i0, j0
@@ -100,8 +100,9 @@ def triu_round_robin_index(dims, comm):
     triu_even_index
     Examples
     --------
+    >>> G=sn4sp.similarity_network(attributes, attr_types)
     >>> for index in triu.triu_round_robin_index(comm):
-    ...     print(index)
+    ...     G.edge_probability()
     """
 
     for i in xrange(comm.Get_rank(), dims, comm.Get_size()):
@@ -131,4 +132,4 @@ def triu_index(dims, comm, scheduning='even'):
     """
     if scheduning not in ('even', 'round_robin'):
         raise ValueError('Unknown scheduling type "{0}"'.format(scheduning))
-    return eval('sn4sp.parallel.triu.triu_{0}_index(dims, comm)'.format(scheduning))
+    return eval('triu_{0}_index(dims, comm)'.format(scheduning))

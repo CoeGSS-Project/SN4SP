@@ -31,12 +31,16 @@ def read_attr_table_h5(path, attr_types=None, attr_group='SPP10pc',
                        attr_values_dataset='ppd', attr_types_dataset='da', truncate=None, **kwargs):
     """ Read node (agent) attributes in HDF5 format.
 
-    Args:
-        path:        path to HDF5 file with node attributes
-        attr_types:  sequence (list) of characters that helps to distinguish between attribute types:
-                     'c' -- categorical, 'o' - ordinal,'g' - geographic (latitude/longitude)
-
-    Returns:
+    Parameters
+    ----------
+    path :
+        Path to HDF5 file with node attributes.
+    attr_types :
+        Sequence (list) of characters that helps to distinguish between attribute types:
+        'c' -- categorical, 'o' - ordinal,'g' - geographic (latitude/longitude).
+    Returns
+    -------
+    G : sn4sp.SimilarityGraph
         Similarity network object initialized with the node attributes from file `path`.
 
     Raises:
@@ -80,17 +84,21 @@ def read_attr_table_h5(path, attr_types=None, attr_group='SPP10pc',
             if attr_type == 'c':
                 logging.debug( 'categorie codes for {0}=[{1}]'.\
                                format(attr_name, ','.join(map(str, numpy.unique(vertex_attrs[attr_name])))) )
+            if attr_type == 'o':
+                logging.debug( 'number of unique ordinal values |{0}|={1}'.\
+                               format(attr_name, len(numpy.unique(vertex_attrs[attr_name]))) )
     return SimilarityGraph(vertex_attrs, attr_types, **kwargs)
 
 def write_edges_probabilities_h5(G, path, network_group="SimNet", edges_dataset="edge_list", chunk_len=int(1e4)):
     """ Write edge probabilities of the similarity network G in edge-list format to HDF5 file.
     Parameters
     ----------
-    G : similarity network
+    G : sn4sp.SimilarityGraph
+        Similarity network
     path : string or file
-       Filename (or file handle) for data output.
+        Filename (or file handle) for data output.
     chunk_len: int
-       Size of chunks for writting to HDF5 file
+        Size of chunks for writting to HDF5 file
     Examples
     --------
     >>> write_edges_probabilities_h5(G,"test.h5")
@@ -149,6 +157,7 @@ def write_edges_probabilities_h5(G, path, network_group="SimNet", edges_dataset=
 
         # Fix size of the dataset and close file
         edge_list.resize((offset,))
+        # TODO: explore h5py file closing problem if `offset` is less than 95% of `chunk_len`
         output_file.close()
 
         logging.info( 'file "{0}" is closed'.format(path) )
