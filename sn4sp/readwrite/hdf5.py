@@ -14,8 +14,8 @@ and writes similarity network as edge lists to HDF5 file.
 """
 __author__ = '\n'.join(['Sergiy Gogolenko <gogolenko@hlrs.de>',
                         'Fabio Saracco <fabio@imt.it>'])
-__all__ = ['write_edges_probabilities_h5',
-           'read_attr_table_h5']
+__all__ = [ 'read_attr_table_h5',
+            'write_edges_probabilities_h5', ]
 
 import logging
 import datetime
@@ -33,24 +33,29 @@ def read_attr_table_h5(path, attr_types=None, attr_group='SPP10pc',
 
     Parameters
     ----------
-    path :
+    path : str
         Path to HDF5 file with node attributes.
-    attr_types :
+    attr_types : list
         Sequence (list) of characters that helps to distinguish between attribute types:
-        'c' -- categorical, 'o' - ordinal,'g' - geographic (latitude/longitude).
+        ``c`` -- categorical, ``o`` - ordinal, ``g`` - geographic (latitude/longitude).
+    
     Returns
     -------
     G : sn4sp.SimilarityGraph
         Similarity network object initialized with the node attributes from file `path`.
 
-    Raises:
-        IOError:    An error occurred accessing the HDF5 input file.
-        ValueError: An error occurred in characterization of attribute types.
+    Raises
+    ------
+    IOError : exception
+        An error occurred accessing the HDF5 input file.
+    ValueError : exception
+        An error occurred in characterization of attribute types.
 
     Examples
     --------
     >>> read_attr_table_h5(filename)
     >>> read_attr_table_h5(filename, list("cocccoggggo"), attr_group="attributes")
+
     See Also
     --------
     write_edges_probabilities_h5
@@ -91,6 +96,7 @@ def read_attr_table_h5(path, attr_types=None, attr_group='SPP10pc',
 
 def write_edges_probabilities_h5(G, path, network_group="SimNet", edges_dataset="edge_list", chunk_len=int(1e4)):
     """ Write edge probabilities of the similarity network G in edge-list format to HDF5 file.
+
     Parameters
     ----------
     G : sn4sp.SimilarityGraph
@@ -102,6 +108,7 @@ def write_edges_probabilities_h5(G, path, network_group="SimNet", edges_dataset=
     Examples
     --------
     >>> write_edges_probabilities_h5(G,"test.h5")
+
     See Also
     --------
     read_attr_table_h5

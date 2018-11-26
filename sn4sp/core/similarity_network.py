@@ -25,7 +25,12 @@ from math import log as log2
 from math import sqrt
 from math import atan2 as arctan2
 from itertools import islice
-from itertools import izip
+from itertools import islice
+import sys
+if sys.version_info[0] >= 3:
+    izip=zip
+else:
+    from itertools import izip
 
 class SimilarityGraph:
     """
@@ -34,23 +39,44 @@ class SimilarityGraph:
 
     Parameters
     ----------
-    attr_table :
+    attr_table : numpy.array or pandas.table
         Table (or numpy array) with attribute values
-    attr_types :
+    attr_types : list
         Attribute types
-    attr_names :
+    attr_names : list
         Names of the attributes
-    comm :
+    comm : mpi4py.MPI.Intracomm object
         MPI communicator
-    hss :
+    hss : float
         Half-similarity scale
-    damping :
+    damping : float
         Damping coefficient (if 0 use exponential damping)
-    sample_fraction :
+    sample_fraction : float
         Percentage of the population
     """
     R_EARTH=6.3781*10**6    # Earth radius in meters
     def __init__(self, attr_table, attr_types, attr_names=None, comm=MPI.COMM_WORLD, hss=5000, damping=0, sample_fraction=1e-1):
+        """
+        Initialize a probabilistic (undirected) graph model based on Lin similarity
+        with geo-spatial damping.
+
+        Parameters
+        ----------
+        attr_table : numpy.array or pandas.table
+            Table (or numpy array) with attribute values
+        attr_types : list
+            Attribute types
+        attr_names : list
+            Names of the attributes
+        comm : mpi4py.MPI_Comm
+            MPI communicator
+        hss : float
+            Half-similarity scale
+        damping : float
+            Damping coefficient (if 0 use exponential damping)
+        sample_fraction : float
+            Percentage of the population
+        """
         self.comm=comm
         comm_rank=self.comm.Get_rank()
 
@@ -132,7 +158,7 @@ class SimilarityGraph:
 
         Parameters
         ----------
-        u, v :
+        u, v : int
             Indices of vertices
         """
 
@@ -246,17 +272,20 @@ class SimilarityGraph:
 
         Returns
         -------
-        edges : 
+        edges : iterator
             Edge iterator, which iterates over (u, v, p) tuples of edges,
             where p is a probability of edge.
+
         Notes
         -----
         Do not confuse this upper triangular matrix with upper triangular part of 
         a graph probability matrix where each element (i,j) corresponds to probability
         of edge existence. In our matrix, edge probabilities are not normalized.
+
         Examples
         --------
         >>> [(i,j,p) for i,j,p in G.edges_probabilities()]
+
         """
         # TODO: replace `edges_probabilities` with edge view
 

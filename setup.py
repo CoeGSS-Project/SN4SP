@@ -17,10 +17,6 @@ import subprocess
 
 # Check Python version
 if sys.version_info[:2] < (2, 7) or sys.version_info[0] >= 3:
-    # import warnings
-    # warnings.warn( "Current release of SN4SP requires Python 2.7+, but NOT Python 3+ ({}.{} detected).".\
-    #                format(*sys.version_info[:2]) )
-    # sys.exit(-1)
     raise RuntimeError( "Current release of SN4SP requires Python 2.7+, but NOT Python 3+ ({}.{} detected).".\
                         format(*sys.version_info[:2]) )
 
@@ -155,6 +151,7 @@ def setup_package():
     write_version_py()
 
     packages = [ "sn4sp",
+                 "sn4sp.core",
                  "sn4sp.parallel",
                  "sn4sp.readwrite" ]
     data = [] # TODO: specify
