@@ -5,6 +5,7 @@ about node attributes (synthetic population).
 
 - **Source:** https://github.com/CoeGSS-Project/SN4SP
 - **Bug reports:** https://github.com/CoeGSS-Project/SN4SP/issues
+- **Documentation**: https://sn4sp.readthedocs.io
 
 It provides:
   1. a similarity network object which partially reproduce interface of `networkX` graphs
@@ -15,7 +16,9 @@ It provides:
      influence matrix based on the [Lin similarity](http://dl.acm.org/citation.cfm?id=645527.657297). 
   6. Cloudify blueprint for submitting network reconstruction scripts to HPC clusters.
 
-More details can be found in CoeGSS deliverable.
+More details can be found in CoeGSS deliverables
+([D3.4](http://coegss.eu/wp-content/uploads/2018/11/D3.4.pdf)
+and [D3.7](http://coegss.eu/wp-content/uploads/2018/11/D3.7.pdf)).
 
 [HDF5]: https://support.hdfgroup.org/HDF5/
 

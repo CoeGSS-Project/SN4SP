@@ -10,7 +10,10 @@ Welcome to SN4SP's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   user/install
+   user/requirements
    references/index
+   user/license
 
 Indices and tables
 ==================

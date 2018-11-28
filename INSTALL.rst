@@ -12,7 +12,7 @@ Prerequisites
 
 Building SN4SP requires the following software installed:
 
-1) Python 2, Python__ 2.7.x or newer.
+1) Python 2, `Python <http://www.python.org>`_  2.7.x or newer.
 
    On Debian and derivative (Ubuntu): python python-dev
 
@@ -32,7 +32,8 @@ Building SN4SP requires the following software installed:
 
    This is required for both testing and using ``sn4sp``.
 
-Python__ http://www.python.org
+You can find more information on deployment of Python environments for ``sn4sp``
+on clusters :doc:`here <requirements>`.
 
 
 Basic Installation
@@ -47,8 +48,11 @@ To perform an inplace build that can be run from the source folder run::
 
     $ python setup.py build_ext --inplace -j 2
 
-Note that the ``python`` command here is the system default Python. Use 
-``python2`` if your default environment is set for python 3.
+.. note::
+   
+   ``python`` command here is the system default Python.
+   Use ``python2`` if your default environment is set for python 3.
+
 See `Requirements for Installing Packages <https://packaging.python.org/tutorials/installing-packages/>`_
 for more details.
 
@@ -58,9 +62,13 @@ Building on HPC clusters
 Cray Clusters
 -------------
 
-TODO
+See :doc:`deployment guidelines <requirements>` for detailed instructions on
+satisfying ``sn4sp`` prerequisites on Cray clusters.
 
-   Execution on Cray clusters requires to disable HDF5 file locking ``export HDF5_USE_FILE_LOCKING=FALSE`` if use ``h5py``.
+.. note::
+   
+   Execution on Cray clusters requires to disable HDF5 file locking ``export HDF5_USE_FILE_LOCKING=FALSE``
+   if one uses ``h5py``.
 
 Build issues
 ============
