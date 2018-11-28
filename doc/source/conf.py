@@ -16,10 +16,18 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import sys
+from unittest.mock import MagicMock
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+MOCK_MODULES = ['numpy', 'mpi4py', 'h5py', 'argparse']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # -- Project information -----------------------------------------------------
-import os,sys
-sys.path.insert( 0, "/home/hpcgogol/proj/coegss/repos/SN4SP" )
 
 project = 'SN4SP'
 copyright = '2018, Sergiy Gogolenko, Fabio Saracco'
