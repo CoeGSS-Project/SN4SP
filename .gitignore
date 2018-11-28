@@ -29,6 +29,9 @@ GRTAGS
 GSYMS
 GTAGS
 .cache
+# Tox and unittesting
+.coverage
+.tox
 
 ############################################################
 # Compiled source

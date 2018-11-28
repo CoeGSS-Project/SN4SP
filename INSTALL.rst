@@ -41,6 +41,7 @@ Basic Installation
 
 To install ``sn4sp`` run::
 
+    $ export PYTHONPATH=$HOME/.local/lib/python2.7/site-packages:$PYTHONPATH
     $ python setup.py build -j 2 install --prefix $HOME/.local
 
 This will compile ``sn4sp`` on 2 CPU cores and install it into the specified prefix.
