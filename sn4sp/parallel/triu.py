@@ -25,6 +25,8 @@ import logging
 
 from math import sqrt
 
+_scheduling_types = ('even', 'round_robin')
+
 def triu_even_index(dims, comm):
     """ An iterator for upper triangular part of 2D matrix.
     Distributes upper triangular matrix elements evenly between processes
@@ -50,12 +52,12 @@ def triu_even_index(dims, comm):
     # Estimate number of potential edges (couples)
     num_couples=int((dims - 1)*dims/2)  # total number of couples (potential edges) in the graph.
     def pos2ij(pos):
-        """Convert position in an upper triangular matrix to a pair of indices (i,j)."""
+        """ Convert position in an upper triangular matrix to a pair of indices (i,j). """
         i=int(dims - sqrt((dims-.5)**2 - 2.*pos) - 0.5) # take floor with `int`
         j=int(pos + i*(i + 1)/2 - i*(dims - 1) + 1)
         return i,j
     def ij2pos(i,j):
-        """Convert pair of indices (i,j) to a position in an upper triangular matrix."""
+        """ Convert pair of indices (i,j) to a position in an upper triangular matrix. """
         return int(i*dims - i*(i + 3)/2 + j)
 
     # Distribute computational work (couples) between MPI process.
@@ -101,8 +103,22 @@ def triu_round_robin_index(dims, comm):
     Examples
     --------
     >>> G=sn4sp.similarity_network(attributes, attr_types)
-    >>> for index in triu.triu_round_robin_index(comm):
-    ...     G.edge_probability()
+    >>> for u, v in triu.triu_round_robin_index(comm):
+    ...     G.edge_probability(u, v)
+
+    Notes
+    -----
+    Derivation:
+
+    >>> import sympy
+    >>> i = sympy.Symbol("i", integer=True)
+    >>> j = sympy.Symbol("j", integer=True)
+    >>> n = sympy.Symbol("n", integer=True)
+    >>> K = sympy.Symbol("K", positive=True)
+    >>>
+    >>> S = lambda k: sympy.summation(n-j-1,[j,0,k-1])
+    >>> pos = S(i) + j - i
+    >>> str(sympy.solve(S(i) - K, i)[0]), str(pos)
     """
 
     for i in xrange(comm.Get_rank(), dims, comm.Get_size()):
@@ -130,6 +146,6 @@ def triu_index(dims, comm, scheduning='even'):
     >>> for index in triu.triu_round_robin_index(comm):
     ...     print(index)
     """
-    if scheduning not in ('even', 'round_robin'):
+    if scheduning not in _scheduling_types:
         raise ValueError('Unknown scheduling type "{0}"'.format(scheduning))
     return eval('triu_{0}_index(dims, comm)'.format(scheduning))
